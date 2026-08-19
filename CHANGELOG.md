@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.6.0 — PvM scoring v2 test build
+
+- Archived the legacy item-centric scoring model in `docs/scoring-v1.md`.
+- PvM now evaluates the whole equipped loadout before and after a candidate replacement.
+- Added build-role detection: Magic/Wizardry, Physical, AGI ranged, ENE support.
+- Added Wizardry option parsing to the utility model.
+- PvM output is split into Offense / Survivability / Utility components.
+- DD remains useful in PvM and PvP.
+- SD contributes exactly zero to pure PvM.
+- PvM defensive value uses whole-loadout diminishing returns to reduce repetitive defensive stacking.
+- Two-handed candidates continue to replace and compare against both occupied hands.
+- Candidate cards expose a PvM v2 component delta for easier live tuning.
+- v0.5.1 UI changes retained: auto-upgrade vs slot result tabs, hidden class selector, in-button progress state.
+
 ## 0.5.0 — development
 
 - Repository source moved to `src/mudream-trader.user.js`.
@@ -27,8 +41,9 @@
 
 ## Next
 
-- Live-test all class filter names against MuDream's current GraphQL schema.
-- Tune class/build-aware scoring from live tests.
+- Validate PvM scoring v2 against Wizardry MG, physical MG, DL and ELF examples.
+- Tune survivability saturation from live recommendations rather than isolated coefficients.
+- Migrate PvP / Universal / Zen to the whole-loadout architecture after PvM stabilizes.
 - Improve appraisal confidence and price bands.
 - Add market history.
 - Verify native purchase mutation before enabling direct Buy.
