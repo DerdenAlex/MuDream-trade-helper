@@ -27,17 +27,31 @@ jobs:
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
 
+      - name: Detect packaged artifact
+        id: artifact
+        shell: bash
+        run: |
+          VERSION='${{ steps.version.outputs.version }}'
+          PART_DIR="dist/v${VERSION}"
+          if compgen -G "$PART_DIR/part-*.b64" > /dev/null; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+            echo "No packaged artifact for v${VERSION}; release step skipped."
+          fi
+
       - name: Decode extension ZIP
+        if: steps.artifact.outputs.exists == 'true'
         shell: bash
         run: |
           VERSION='${{ steps.version.outputs.version }}'
           PART_DIR="dist/v${VERSION}"
           OUT="mudream-trader-v${VERSION}.zip"
-          test -d "$PART_DIR"
           cat "$PART_DIR"/part-*.b64 | base64 -d > "$OUT"
           unzip -t "$OUT"
 
       - name: Validate packaged JavaScript and manifest
+        if: steps.artifact.outputs.exists == 'true'
         shell: bash
         run: |
           VERSION='${{ steps.version.outputs.version }}'
@@ -47,6 +61,7 @@ jobs:
           node -e "const fs=require('fs'); const m=JSON.parse(fs.readFileSync('_release_check/manifest.json','utf8')); const c=JSON.parse(fs.readFileSync('config.json','utf8')); if(m.version!==c.latestVersion) throw new Error('manifest.version != config.latestVersion')"
 
       - name: Create or update GitHub Release
+        if: steps.artifact.outputs.exists == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ steps.version.outputs.tag }}
