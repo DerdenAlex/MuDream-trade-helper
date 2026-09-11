@@ -31,10 +31,10 @@ jobs:
         shell: bash
         run: |
           VERSION='${{ steps.version.outputs.version }}'
-          SRC="dist/mudream-trader-v${VERSION}.zip.b64"
+          PART_DIR="dist/v${VERSION}"
           OUT="mudream-trader-v${VERSION}.zip"
-          test -f "$SRC"
-          base64 -d "$SRC" > "$OUT"
+          test -d "$PART_DIR"
+          cat "$PART_DIR"/part-*.b64 | base64 -d > "$OUT"
           unzip -t "$OUT"
 
       - name: Validate packaged JavaScript and manifest
